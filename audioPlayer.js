@@ -10,19 +10,20 @@ window.onload = function() {
         var audioSrc = audioCtx.createMediaElementSource(audio);
         var analyser = audioCtx.createAnalyser();
 
-        audioSrc.connect(analyser);
+        //audioSrc.connect(analyser);
         analyser.connect(audioCtx.destination);
+        audioSrc.connect(analyser);
 
         var frequencyData = new Uint8Array(analyser.frequencyBinCount);
     
         function renderFrame() {
             requestAnimationFrame(renderFrame);
             analyser.getByteFrequencyData(frequencyData);
-            console.log(frequencyData);
         }
 
         audio.play();
         renderFrame();
+
         
     }
 }
