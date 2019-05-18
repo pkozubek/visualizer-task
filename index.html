@@ -5,15 +5,16 @@
     </head>
     <body>
         <main>
-            <canvas id = 'visualizer'></canvas>
-            <audio src="song1.mp3" id = 'song'>
+            <div id = 'canvasWrapper'>
+                <canvas id = 'visualizer'></canvas>
+            </div>
+            <audio src="music/song1.mp3" id = 'song'>
             </audio>
             <div id = 'playlist'>
+                <h1 id = 'songName'>Play some music!</h1>
+                <button id = 'previousSong'>Previous song</button>
                 <button id = 'play'>Play</button>
-                <ul>
-                    <li>1 utwor</li>
-                    <li>2 utwor</li>
-                </ul>
+                <button id = 'nextSong'>Next song</button>
             </div>
         </main>
     </body>
