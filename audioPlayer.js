@@ -19,6 +19,7 @@ window.onload = function() {
         function renderFrame() {
             requestAnimationFrame(renderFrame);
             analyser.getByteFrequencyData(frequencyData);
+            console.log(frequencyData);
         }
 
         audio.play();
