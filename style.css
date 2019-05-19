@@ -38,6 +38,8 @@ img{
 #songDescription{
     width: 25%;
     display: inline-block;
+    font-family: 'Indie Flower', cursive;
+    text-align: center;
 }
 
 #musicController{

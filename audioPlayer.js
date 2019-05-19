@@ -1,8 +1,12 @@
 window.onload = function() {
 
+    const songNameOnWindow = document.getElementById('songName');
+    const authorNameOnWindow = document.getElementById('authorName');
+    const albumOnWindow = document.getElementById('album');
+
     const canvas = document.getElementById('visualizer');
     const canvasContext = canvas.getContext('2d');
-    const songNameOnWindow = document.getElementById('songName');
+
     const audioCtx = new AudioContext();
     const audio = new Audio();
     const audioSrc = audioCtx.createMediaElementSource(audio);
@@ -15,9 +19,9 @@ window.onload = function() {
     canvas.height = HEIGHT;
 
     const audioTab = [
-        {name: 'song1',src:'music/song1.mp3',album: 'image/song1.'},
-        {name: 'song2',src:'music/song2.mp3'},
-        {name: 'song3',src:'music/song3.mp3'}
+        {name: 'Song 1', author: 'Author1',src:'music/song1.mp3',album: 'image/song1.jpg'},
+        {name: 'Song 2', author: 'Author2',src:'music/song2.mp3',album: 'image/song2.jpg'},
+        {name: 'Song 3', author: 'Author3',src:'music/song3.mp3',album: 'image/song3.jpg'}
     ];
 
     let currentMode = 0;
@@ -56,6 +60,7 @@ window.onload = function() {
         audio.src = audioTab[currentlyPlayed].src;
         audio.pause();
         audio.load();
+        changeNameOfFile();
         audio.play();
         //analyzeMusic();
     });
@@ -66,9 +71,11 @@ window.onload = function() {
         else
             currentlyPlayed++;
         
+        document.getElementById('play').innerHTML = '<i class="fas fa-pause"></i>';  
         audio.src = audioTab[currentlyPlayed].src;
         audio.pause();
         audio.load();
+        changeNameOfFile();
         audio.play();
         //analyzeMusic();
     }
@@ -80,15 +87,16 @@ window.onload = function() {
         else
             currentlyPlayed--;
 
+        document.getElementById('play').innerHTML = '<i class="fas fa-pause"></i>';  
         audio.src = audioTab[currentlyPlayed].src;
         audio.pause();
         audio.load();
+        changeNameOfFile();
         audio.play();
         //analyzeMusic();
     }
 
     function analyzeMusic(){
-        
         changeNameOfFile();
         analyzeStarted = true;
         audio.src = audioTab[currentlyPlayed].src;
@@ -100,7 +108,7 @@ window.onload = function() {
         analyser.fftSize = 512; 
         const bufferLength = analyser.frequencyBinCount;
         console.log(bufferLength);
-        var frequencyData = new Uint8Array(bufferLength);
+        let frequencyData = new Uint8Array(bufferLength);
     
         function renderFrame() {
             
@@ -142,12 +150,8 @@ window.onload = function() {
 
     function drawSingleAlternative(dataArray){
         let bars = 128;
-        let barHeight = 0;
-        let barWidth = 1;
         let x = 1;
-        var circle = new Path2D();
         let size = 1;
-        let r,g,b;
         let color;
         canvasContext.fillStyle = "rgb(0,0,0)"; 
         canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
@@ -157,12 +161,12 @@ window.onload = function() {
             barHeight = (dataArray[i] * 2);
             size = dataArray[i] / 25;
 
-            //circle.moveTo(x, HEIGHT - barHeight);
-            circle.arc(x, HEIGHT - barHeight, size, 0, 2 * Math.PI);
-
-            color = `rgb(${dataArray[i]},${dataArray[i]},255)`
+            color = `rgb(0,100,${dataArray[i]})`;
+            canvasContext.beginPath();
+            canvasContext.arc(x, HEIGHT -  barHeight, size, 0, Math.PI * 2, false); // <-- add the arc to the path
             canvasContext.fillStyle = color;
-            canvasContext.fill(circle);
+            canvasContext.fill(); 
+
             
         }
     }
@@ -173,17 +177,17 @@ window.onload = function() {
         startY = HEIGHT/2;
 
         canvasContext.fillStyle = "rgb(0,0,0)"; 
-        var circle = new Path2D();
         canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
         
         for (let i = 0; i < balls; i++) {
             size = dataArray[i] * 1.2;
 
-            color = `rgb(255,255,${dataArray[i]})`;
-            canvasContext.beginPath(); // <-- start a path
-            canvasContext.arc(startX, startY, size, 0, Math.PI * 2, false); // <-- add the arc to the path
+            color = `rgb(0,100,${dataArray[i]})`;
+            canvasContext.beginPath(); 
+            canvasContext.arc(startX, startY, size, 0, Math.PI * 2, false); 
             canvasContext.strokeStyle = color;
-            canvasContext.stroke(); // <-- draw the arc
+            canvasContext.stroke(); 
+
         }
     }
 
@@ -193,14 +197,14 @@ window.onload = function() {
         canvasContext.fillRect(0, HEIGHT-20, WIDTH, 20);
         color = 'rgb(0,191,255)';
         canvasContext.fillStyle = color;
-
         let tempWidth = currentTime/duration * WIDTH;
-
         canvasContext.fillRect(0, HEIGHT-20, tempWidth, 20);
     }
 
     function changeNameOfFile(){
-        songNameOnWindow.innerHTML = "Currently playing: " + audioTab[currentlyPlayed].name;
+        songNameOnWindow.innerHTML = audioTab[currentlyPlayed].name;
+        authorNameOnWindow.innerHTML = audioTab[currentlyPlayed].author;
+        albumOnWindow.src = audioTab[currentlyPlayed].album;
     }
     
 }
