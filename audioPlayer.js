@@ -29,9 +29,6 @@ window.onload = function() {
     let analyzeStarted = false;
 
     document.getElementById('play').addEventListener('click',function(){
-        console.log(audio.length);
-        console.log(audio.paused);
-
         if(audio.played.length === 0 || audio.paused){
             document.getElementById('play').innerHTML = '<i class="fas fa-pause"></i>';  
             if(analyzeStarted)
@@ -55,29 +52,16 @@ window.onload = function() {
             currentMode ++;
     })
 
-    audio.addEventListener('ended',function(){
-        currentlyPlayed++;
-        audio.src = audioTab[currentlyPlayed].src;
-        audio.pause();
-        audio.load();
-        changeNameOfFile();
-        audio.play();
-        //analyzeMusic();
-    });
+    audio.addEventListener('ended',nextSong);
 
     function nextSong(){
+
         if(currentlyPlayed + 1 >= audioTab.length)
             currentlyPlayed = 0;
         else
             currentlyPlayed++;
         
-        document.getElementById('play').innerHTML = '<i class="fas fa-pause"></i>';  
-        audio.src = audioTab[currentlyPlayed].src;
-        audio.pause();
-        audio.load();
-        changeNameOfFile();
-        audio.play();
-        //analyzeMusic();
+        handleSongInit();
     }
 
     function previousSong(){
@@ -87,13 +71,16 @@ window.onload = function() {
         else
             currentlyPlayed--;
 
+        handleSongInit();
+    }
+
+    function handleSongInit(){
         document.getElementById('play').innerHTML = '<i class="fas fa-pause"></i>';  
         audio.src = audioTab[currentlyPlayed].src;
         audio.pause();
         audio.load();
         changeNameOfFile();
         audio.play();
-        //analyzeMusic();
     }
 
     function analyzeMusic(){
@@ -105,89 +92,83 @@ window.onload = function() {
         analyser.connect(audioCtx.destination);
         audioSrc.connect(analyser);
 
-        analyser.fftSize = 512; 
+        analyser.fftSize = 256; 
         const bufferLength = analyser.frequencyBinCount;
-        console.log(bufferLength);
+
         let frequencyData = new Uint8Array(bufferLength);
     
         function renderFrame() {
             
             requestAnimationFrame(renderFrame);
             analyser.getByteFrequencyData(frequencyData);
+            canvasContext.fillStyle = "rgb(0,0,0)"; 
+            canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
+
             switch(currentMode){
                 case(0):
-                    drawSingleFrame(frequencyData);
+                    drawBars(frequencyData);
                     break;
                 case(1):
                     drawCircleAnimation(frequencyData);
                     break;
                 case(2):
-                    drawSingleAlternative(frequencyData);
+                    drawBalls(frequencyData);
                     break;
             }
+
             drawTime(audio.currentTime,audio.duration);
     }
         audio.play();
         renderFrame();
     }
 
-    function drawSingleFrame(dataArray){
-        let bars = 100;
-        let barHeight = 0;
-        let barWidth = 15;
-        let x = 0;
-
-        canvasContext.fillStyle = "rgb(0,0,0)"; 
-        canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
+     function drawBars(dataArray){
+        let bars = 100 , barHeight = 0 , barWidth = 15, x = 0;
+        let gradient;
         
         for (let i = 0; i < bars; i++) {
-            barHeight = (dataArray[i] * 1.6 );
-            canvasContext.fillStyle = `rgb(255,255,255)`;
+            barHeight = (dataArray[i] * 2 );
+
+            gradient = canvasContext.createLinearGradient(255 - dataArray[i],0,30,dataArray[i]);
+            gradient.addColorStop(0,'white');
+            gradient.addColorStop(0.5, 'rgb(0,160,220)');
+            gradient.addColorStop(1,'rgb(0,0,220)');
+
+            canvasContext.fillStyle = gradient;
             canvasContext.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
             x += 20;
         }
     }
 
-    function drawSingleAlternative(dataArray){
-        let bars = 128;
-        let x = 1;
-        let size = 1;
-        let color;
-        canvasContext.fillStyle = "rgb(0,0,0)"; 
-        canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
+    function drawBalls(dataArray){
+        let bars = 128, x = 1, size , color;
 
         for (let i = 0; i < bars; i++) {
             x += 15;
+
             barHeight = (dataArray[i] * 2);
             size = dataArray[i] / 25;
 
-            color = `rgb(0,100,${dataArray[i]})`;
+            color = `rgb(${255- dataArray[i]} ,${255- dataArray[i]}, 200)`;
+
             canvasContext.beginPath();
             canvasContext.arc(x, HEIGHT -  barHeight, size, 0, Math.PI * 2, false); // <-- add the arc to the path
             canvasContext.fillStyle = color;
             canvasContext.fill(); 
-
-            
+           
         }
     }
 
     function drawCircleAnimation(dataArray){
-        let balls = 64;
-        startX = WIDTH/2;
-        startY = HEIGHT/2;
-
-        canvasContext.fillStyle = "rgb(0,0,0)"; 
-        canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
+        let balls = 64 , startX = WIDTH/2, startY = HEIGHT/2;
         
         for (let i = 0; i < balls; i++) {
             size = dataArray[i] * 1.2;
-
-            color = `rgb(0,100,${dataArray[i]})`;
+            color = `rgb(${255- dataArray[i]} ,${255- dataArray[i]}, 220)`;
             canvasContext.beginPath(); 
             canvasContext.arc(startX, startY, size, 0, Math.PI * 2, false); 
             canvasContext.strokeStyle = color;
             canvasContext.stroke(); 
-
         }
     }
 
@@ -195,7 +176,7 @@ window.onload = function() {
         let color = 'rgb(211,211,211)'; 
         canvasContext.fillStyle = color;
         canvasContext.fillRect(0, HEIGHT-20, WIDTH, 20);
-        color = 'rgb(0,191,255)';
+        color = 'rgb(0,160,220)';
         canvasContext.fillStyle = color;
         let tempWidth = currentTime/duration * WIDTH;
         canvasContext.fillRect(0, HEIGHT-20, tempWidth, 20);
