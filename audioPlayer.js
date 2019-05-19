@@ -6,14 +6,10 @@ window.onload = function() {
 
     const canvas = document.getElementById('visualizer');
     const canvasContext = canvas.getContext('2d');
+    
+    let audioSrc = null, audioCtx = null, analyser = null;
 
     const audio = new Audio();
-    let audioSrc = null;
-    let audioCtx = null;  
-    
-    let analyser = null;
-    
-
     const WIDTH = window.innerWidth;
     const HEIGHT = window.innerHeight * 0.8;
 
@@ -149,10 +145,10 @@ window.onload = function() {
         let bars = 128, x = 1, size , color;
 
         for (let i = 0; i < bars; i++) {
-            x += 15;
+            x += 26;
 
             barHeight = (dataArray[i] * 2);
-            size = dataArray[i] / 25;
+            size = dataArray[i] / 20;
 
             color = `rgb(${255- dataArray[i]} ,${255- dataArray[i]}, 200)`;
 
