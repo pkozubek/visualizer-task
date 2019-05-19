@@ -1,20 +1,27 @@
 <html>
     <head>
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" 
+            integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
         <link rel="stylesheet" href="style.css">
         <script src="audioPlayer.js"></script>
     </head>
     <body>
         <main>
-            <div id = 'canvasWrapper'>
-                <canvas id = 'visualizer'></canvas>
-            </div>
+            <canvas id = 'visualizer'></canvas>
             <audio src="music/song1.mp3" id = 'song'>
             </audio>
             <div id = 'playlist'>
-                <h1 id = 'songName'>Play some music!</h1>
-                <button id = 'previousSong'>Previous song</button>
-                <button id = 'play'>Play</button>
-                <button id = 'nextSong'>Next song</button>
+                <img src = 'image/start.jpg'>
+                <div id = 'songDescription'>
+                        <h1 id = 'songName'>Play some music!</h1>
+                        <h2 id = ''></h2>
+                </div>
+                <div id = 'musicController'>
+                        <button id = 'previousSong'><i class="fas fa-backward"></i></button>
+                        <button id = 'play'><i class="fas fa-play"></i></button>
+                        <button id = 'nextSong'><i class="fas fa-forward"></i></button>
+                </div>
+
             </div>
         </main>
     </body>
