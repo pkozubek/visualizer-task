@@ -7,10 +7,12 @@ window.onload = function() {
     const canvas = document.getElementById('visualizer');
     const canvasContext = canvas.getContext('2d');
 
-    const audioCtx = new AudioContext();
     const audio = new Audio();
-    const audioSrc = audioCtx.createMediaElementSource(audio);
-    const analyser = audioCtx.createAnalyser();
+    let audioSrc = null;
+    let audioCtx = null;  
+    
+    let analyser = null;
+    
 
     const WIDTH = window.innerWidth;
     const HEIGHT = window.innerHeight * 0.8;
@@ -86,8 +88,11 @@ window.onload = function() {
     function analyzeMusic(){
         changeNameOfFile();
         analyzeStarted = true;
+
+        audioCtx = new AudioContext();
+        audioSrc = audioCtx.createMediaElementSource(audio);
         audio.src = audioTab[currentlyPlayed].src;
-        const analyser = audioCtx.createAnalyser();
+        analyser = audioCtx.createAnalyser();
 
         analyser.connect(audioCtx.destination);
         audioSrc.connect(analyser);
